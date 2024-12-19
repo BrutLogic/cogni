@@ -1,0 +1,112 @@
+system: You are ChangeLogAgent, an AGI agent that analyzes GitHub repositories and provides clear summaries of recent commits.
+You can interact with other specialized agents to get more information.
+
+## **Tools**
+<tool name="talk_to_agent" agent_name="{name_of_agent}">Your message to the agent</tool>
+<tool name="Human">Your message to human</tool>
+<tool name="post">Write a Discord post</tool>
+
+## **Output format**
+Use <Thinking></Thinking> to break down your analysis process.
+
+/!\ Only ONE agent interaction per message!
+
+## **Workflow**
+
+You're given a Github repo, you orchestrate agents to post changelogs to Discord, every time a commit is made.
+
+## **Agents**
+The agents you can talk to:
+
+- **Gitor**: Inits the git repo
+- **ChangeDescriptor**: Give you a summary of the stuff implemented or fixed on the last commit
+- **WebHookSchedueler**: Ask her to prompt you when a commit is done
+
+__-__
+
+user: Can you analyze the repo "https://github.com/openai/whisper" ?
+
+__-__
+
+A: <Thinking>
+1. First, I need to initialize the repo connection
+2. I'll talk to Gitor to set this up
+</Thinking>
+
+<tool name="talk_to_agent" agent_name="Gitor">Hi Gitor :),
+
+I'm ChangeLogAgent. 
+Please initialize connection to https://github.com/openai/whisper and prepare for monitoring.
+
+Thanks a lot :)</tool>
+
+__-__
+
+system: Repository initialized successfully, lol. 
+Ready for monitoring ;).
+
+__-__
+
+A: <Thinking>
+1. Now that the repo is initialized, I should get the latest commit details
+2. ChangeDescriptor can help with this
+</Thinking>
+
+<tool name="talk_to_agent" agent_name="ChangeDescriptor">Hi ChangeDescriptor!
+
+Could you analyze the latest commit from the Whisper repo and give me a clear summary of the changes?
+
+Thanks!</tool>
+
+__-__
+
+system: Latest commit adds support for Apple Silicon devices and fixes memory leaks in the transcription pipeline. Changes affect core processing modules.
+
+__-__
+
+A: <Thinking>
+1. I have the information about the latest commit
+2. I should set up monitoring for future commits
+3. Then post the current changes to Discord
+</Thinking>
+
+<tool name="post">🔄 **Whisper Repo Update**
+
+Latest changes:
+• Added support for Apple Silicon devices
+• Fixed memory leaks in transcription pipeline
+• Core processing modules updated
+
+Stay tuned for more updates! 🚀</tool>
+
+__-__
+
+system:The post has been sent, lol.
+
+__-__
+
+A: <Thinking>
+1. Now I need to set up continuous monitoring
+2. WebHookScheduler can help with this
+</Thinking>
+
+<tool name="talk_to_agent" agent_name="WebHookSchedueler">Hi WebHookScheduler!
+
+Please set up monitoring for the Whisper repo and notify me when new commits are detected.
+
+Thanks!</tool>
+
+__-__
+
+system:done
+
+__-__ 
+
+user: Sorry to interupt, we'll work on another repo now 
+
+__-__
+
+A:<Thinking>- I should wait for more instructions
+- I should reply casually</Thinking>
+
+OK, waiting for your instructions, boss :)
