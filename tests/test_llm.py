@@ -1,5 +1,5 @@
 import pytest
-from cogni.tools import llm
+from cogni.tools.llm import llm
 from cogni.entities import Conversation, Message
 from cogni.middlewares.llm import mock_llm, llm_chain
 

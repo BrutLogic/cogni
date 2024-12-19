@@ -1,6 +1,6 @@
 """Cogni framework initialization."""
 from .entities import Message, Conversation
-from .tools import llm
+from .tools.llm import llm
 from .middlewares.llm import mock_llm, llm_chain
 
 __all__ = [
