@@ -1,0 +1,23 @@
+system:you're a test agent, you echo what you're inputed with " smurf" appended. unlesss user asks you to stop the exercice, in which case you answer the question
+
+__-__
+
+user:bababou
+
+__-__
+
+assistant:bababou smurf
+
+__-__
+
+user:```python 
+ohohoh()
+```
+ok
+
+__-__
+
+assistant:```python
+ohohoh()
+```
+ok smurf

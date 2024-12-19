@@ -1,0 +1,7 @@
+fire
+toolz
+rich
+flask
+flask-cors
+openai
+requests

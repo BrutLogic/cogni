@@ -37,129 +37,154 @@ Our goal as coders should be that, from any given scope, all dependencies are ma
 ### Everything is a function
 We'll define *Agent* as a blackbox that takes any number of inputs of any type, and returns either nothing, or anything of any type, and potentially has *side effects*.
 
-In other terms, agents can be thought as **functions**.
+In other terms, agents can be thought as **functions**. This allows for powerful control flows:
 
-Here's a toy example of an execution flow this approach allows for:
 ```python
-from cogni import Agent
+# Sequential processing
+result = Agent['processor'](Agent['parser'](user_input))
 
-for task in Agent['task_lister'](user_input):
-    Agent['task_executor'](task)
+# Parallel tasks
+tasks = Agent['task_splitter'](complex_job)
+results = [Agent['worker'](task) for task in tasks]
+final = Agent['aggregator'](results)
+
+# Recursive handling
+def process_with_feedback(input_data):
+    result = Agent['processor'](input_data)
+    if Agent['quality_check'](result):
+        return result
+    return process_with_feedback(Agent['refiner'](result))
 ```
 
-### Cogni's approach
-
-#### Separation of concerns
-In web development, it's common to have a conventional directory structure containing:
-- Presentation/integration (templates)
-- Application logic (TypeScript)
-- Styling (CSS)
-
-Adopting a similar approach, we can break down our agents into:
-- Conversation templates
-- Application Logic
-- Tools/utilities/dependencies
-
-Because some processes will be common across agents, we'll further break down *Application Logic* into middlewares.
-
-#### Global containers and magic imports
-Taking inspiration from web frameworks like Nuxt and aiming for **Low Code**, all components of our agentic stack will be automatically imported and accessible via global containers:
+### Magic Imports
+Cogni uses automatic discovery to make components available globally:
 
 ```python
-# Inside any file within our project
-from cogni import tool
+# Components are automatically discovered in your project structure
+from cogni import Tool, Agent, MW
+
+# No need to manually import individual tools/agents
+result = Tool['my_tool'](data)
+response = Agent['my_agent'](query)
+```
+
+### Tools System
+Tools are standalone functions that can be used by any agent:
+
+```python
+from cogni import tool, Tool
 
 @tool
-def add_ints(a: int, b: int) -> int:
-    return a + b
+def fetch_weather(city: str) -> dict:
+    """Get weather data for a city"""
+    return weather_api.get(city)
 
-# Automatically available anywhere
-from cogni import Tool
-print("4 + 3 =", Tool['add_ints'](4, 3))
+# Use anywhere in your code
+Tool['fetch_weather']('Paris')
 ```
 
-### Building an agent with Cogni
+### Creating an Agent
+Agents are created by combining a prompt template (.conv file) with middleware:
 
-#### Tools vs Middleware
-- **Tools** (@tool): Standalone functions for discrete operations
+1. Create the prompt template (my_agent.conv):
+```
+system: You are MyAgent, designed to process user requests.
+Your goal is to {goal}.
+
+user: {user_input}
+```
+
+2. Create the agent:
 ```python
-@tool
-def validate_json(data: str) -> bool:
-    return is_valid_json(data)
-```
-
-- **Middleware** (@mw): Functions that process agent conversations
-```python
-@mw
-def add_context(ctx, conv):
-    conv.add_message("system", get_context())
-    return conv
-```
-
-#### Agent Flow with Rehop
-Agents can trigger multiple LLM calls in a conversation:
-
-```python
-@mw
-def smart_reply(ctx, conv):
-    # First inference
-    conv = conv.rehop(llm(conv))
-    
-    # Check if we need clarification
-    if needs_clarification(conv[-1].content):
-        # Second inference with updated context
-        conv = conv.rehop(
-            "Please clarify your previous response",
-            role="system"
-        )
-    return conv
-
-# Create agent with middleware chain
-agent = Agent("smart_agent", "prompt|gpt4|smart_reply")
-```
-
-The rehop mechanism allows:
-- Multiple LLM calls per conversation
-- Dynamic conversation flow
-- Context preservation between calls
-
-#### Getting Started
-
-1. Install:
-```bash
-pip install cogni
-```
-
-2. Create an agent:
-```python
-from cogni import Agent, mw, tool
-
-@tool
-def fetch_data(query: str) -> dict:
-    """Tool for data retrieval"""
-    return database.query(query)
+from cogni import Agent, mw
 
 @mw
 def process_response(ctx, conv):
-    """Middleware for response processing"""
-    return enhance(conv)
+    # Use tools if needed
+    weather = Tool['fetch_weather'](conv[-1].content)
+    # Return modified conversation
+    return conv.rehop(f"The weather is {weather}")
 
 # Chain middlewares with pipes
-agent = Agent("my_agent", "prompt|gpt4|process_response")
+Agent('my_agent', 'prompt|gpt4|process_response')
 ```
 
-3. Use the agent:
+### Middleware Flow
+Middlewares form a processing chain, each receiving and returning a conversation:
+
 ```python
-result = agent("Hello!")
+@mw
+def smart_middleware(ctx, conv):
+    # Access conversation history
+    user_msg = conv[-1].content
+    
+    # Use tools
+    result = Tool['some_tool'](user_msg)
+    
+    # Continue conversation with rehop
+    return conv.rehop(
+        f"I found this: {result}",
+        role="assistant"
+    )
 ```
 
-### Key Features
+### Creating a Complete Agent
 
-- **Magic Imports**: Automatic component discovery
-- **Tool System**: Easy function registration and access
-- **Flexible Middleware**: Chainable conversation processors
-- **Rehop Mechanism**: Multi-step LLM interactions
-- **Built-in Conversation Management**: Ready-to-use utilities
+1. Project Structure:
+```
+agents/
+  my_agent/
+    prompts/
+      my_agent.conv    # Prompt template
+    middlewares/
+      process.py       # Custom middleware
+    tools/
+      helpers.py       # Agent-specific tools
+```
+
+2. Prompt Template (my_agent.conv):
+```
+system: You are MyAgent, specialized in {domain}.
+Your capabilities include: {capabilities}
+
+user: {user_input}
+```
+
+3. Middleware (process.py):
+```python
+from cogni import mw, Tool
+
+@mw
+def process(ctx, conv):
+    # Process user input
+    data = Tool['helper'](conv[-1].content)
+    
+    # Continue conversation
+    return conv.rehop(f"Processed: {data}")
+```
+
+4. Tools (helpers.py):
+```python
+from cogni import tool
+
+@tool
+def helper(input: str) -> str:
+    return f"Processed {input}"
+```
+
+5. Agent Registration:
+```python
+from cogni import Agent
+
+Agent('my_agent', 'prompt|gpt4|process')
+```
+
+6. Usage:
+```python
+from cogni import Agent
+
+response = Agent['my_agent']("Hello!")
+```
 
 ### Testing
 

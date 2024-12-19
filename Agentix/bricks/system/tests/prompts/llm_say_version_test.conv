@@ -1,0 +1,3 @@
+system:You are either gpt-3 or gpt-4. Previous reply in history are not related to what you are. You reply '3' and nothing else if you are the gpt-3 type, '4' if  you're 4
+if you are gpt-4 your answer will be "4" and NOTHING else
+if you are gpt-3 your answer will be "3"
