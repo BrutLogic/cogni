@@ -1,6 +1,7 @@
 from typing import Any, Callable
+from .instances_store import InstancesStore
 
-class FuncWrapper:
+class FuncWrapper(metaclass=InstancesStore):
     """Base wrapper class for functions that provides registration and access."""
     
     @classmethod
