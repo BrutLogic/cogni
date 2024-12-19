@@ -1,44 +1,106 @@
 # Cogni
 
 ## What is Cogni?
-Cogni is a micro-framework for building conversational AI systems with minimal boilerplate code. It provides a functional approach to agent development, treating agents as composable functions.
+Cogni is a micro-framework allowing low code/low boilerplate implementation of LLM agents.
 
-### Core Concepts
+### Yeah but, why not LangChain though?
+LangChain/LangGraph allow for creating agents and orchestrating flow and communication.
+One key assumption of Cogni is that agentic execution flow has the same requirements and complexity as code; and therefore Agents should be created, managed, and orchestrated by code.
+Which, as a side effect, allows for borrowing architecture from domains like web dev, where best practices are mature.
 
-#### Magic Imports
-Cogni uses automatic discovery and registration of components:
+## How it works
+Cogni is built on the principle of "Agents as Functions," allowing for a modular and composable approach to AI agent development.
+
+### Hide complexity
+Do Large Language Models have any amount of complexity?
+
+If your answer includes "Matrix multiplication" or "Attention map caching", I would object that I don't care.
+
+LLMs are magic black boxes that take text as input and return text.
+
+For all we care, from our coder point of view, LLMs are as simple as:
 ```python
-# Any file in tools/ directory is automatically imported
-@tool  # Registers function in global Tool container
-def process_data(input: str) -> str:
-    return transform(input)
-
-# Access from anywhere
-from cogni import Tool
-result = Tool['process_data']("hello")
+def chat_completion(prompt: str, model: str = "gpt-3.5-turbo") -> str:
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return response.choices[0].message['content'].strip()
 ```
+
+### Going further
+Our goal as coders should be that, from any given scope, all dependencies are magic black boxes with clear specifications.
+
+### Everything is a function
+We'll define *Agent* as a blackbox that takes any number of inputs of any type, and returns either nothing, or anything of any type, and potentially has *side effects*.
+
+In other terms, agents can be thought as **functions**.
+
+Here's a toy example of an execution flow this approach allows for:
+```python
+from cogni import Agent
+
+for task in Agent['task_lister'](user_input):
+    Agent['task_executor'](task)
+```
+
+### Cogni's approach
+
+#### Separation of concerns
+In web development, it's common to have a conventional directory structure containing:
+- Presentation/integration (templates)
+- Application logic (TypeScript)
+- Styling (CSS)
+
+Adopting a similar approach, we can break down our agents into:
+- Conversation templates
+- Application Logic
+- Tools/utilities/dependencies
+
+Because some processes will be common across agents, we'll further break down *Application Logic* into middlewares.
+
+#### Global containers and magic imports
+Taking inspiration from web frameworks like Nuxt and aiming for **Low Code**, all components of our agentic stack will be automatically imported and accessible via global containers:
+
+```python
+# Inside any file within our project
+from cogni import tool
+
+@tool
+def add_ints(a: int, b: int) -> int:
+    return a + b
+
+# Automatically available anywhere
+from cogni import Tool
+print("4 + 3 =", Tool['add_ints'](4, 3))
+```
+
+### Building an agent with Cogni
 
 #### Tools vs Middleware
 - **Tools** (@tool): Standalone functions for discrete operations
-  ```python 
-  @tool
-  def validate_json(data: str) -> bool:
-      return is_valid_json(data)
-  ```
+```python
+@tool
+def validate_json(data: str) -> bool:
+    return is_valid_json(data)
+```
 
 - **Middleware** (@mw): Functions that process agent conversations
-  ```python
-  @mw
-  def add_context(ctx, conv):
-      conv.add_message("system", get_context())
-      return conv
-  ```
+```python
+@mw
+def add_context(ctx, conv):
+    conv.add_message("system", get_context())
+    return conv
+```
 
 #### Agent Flow with Rehop
 Agents can trigger multiple LLM calls in a conversation:
 
 ```python
-@mw 
+@mw
 def smart_reply(ctx, conv):
     # First inference
     conv = conv.rehop(llm(conv))
@@ -50,10 +112,10 @@ def smart_reply(ctx, conv):
             "Please clarify your previous response",
             role="system"
         )
-    
     return conv
 
-agent = Agent("smart_agent", "prompt|smart_reply")
+# Create agent with middleware chain
+agent = Agent("smart_agent", "prompt|gpt4|smart_reply")
 ```
 
 The rehop mechanism allows:
@@ -61,23 +123,16 @@ The rehop mechanism allows:
 - Dynamic conversation flow
 - Context preservation between calls
 
-#### Conversation Management
-Built-in classes for managing conversations:
-- `Message`: Single message with role and content
-- `Conversation`: Sequence of messages with utilities
-- Serialization/deserialization support
-- OpenAI API format compatibility
-
-### Getting Started
+#### Getting Started
 
 1. Install:
 ```bash
 pip install cogni
 ```
 
-2. Create tools and middleware:
+2. Create an agent:
 ```python
-from cogni import tool, mw, Agent
+from cogni import Agent, mw, tool
 
 @tool
 def fetch_data(query: str) -> dict:
@@ -89,7 +144,8 @@ def process_response(ctx, conv):
     """Middleware for response processing"""
     return enhance(conv)
 
-agent = Agent("my_agent", "prompt|process_response")
+# Chain middlewares with pipes
+agent = Agent("my_agent", "prompt|gpt4|process_response")
 ```
 
 3. Use the agent:
@@ -104,14 +160,6 @@ result = agent("Hello!")
 - **Flexible Middleware**: Chainable conversation processors
 - **Rehop Mechanism**: Multi-step LLM interactions
 - **Built-in Conversation Management**: Ready-to-use utilities
-
-### Architecture
-
-The framework follows these key principles:
-- Automatic component registration
-- Separation of tools and middleware
-- Flexible conversation flow with rehop
-- Convention over configuration
 
 ### Testing
 
