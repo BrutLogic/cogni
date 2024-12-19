@@ -5,39 +5,61 @@ Cogni is a micro-framework for building conversational AI systems with minimal b
 
 ### Core Concepts
 
-#### Agents as Functions
-In Cogni, agents are treated as black-box functions that:
-- Take any number/type of inputs
-- Return any type of output
-- Can have side effects
-- Can be composed and chained
-
-Example:
+#### Magic Imports
+Cogni uses automatic discovery and registration of components:
 ```python
-from cogni import Agent
+# Any file in tools/ directory is automatically imported
+@tool  # Registers function in global Tool container
+def process_data(input: str) -> str:
+    return transform(input)
 
-# Process user input through multiple agents
-result = Agent['summarizer'](
-    Agent['fact_checker'](user_input)
-)
+# Access from anywhere
+from cogni import Tool
+result = Tool['process_data']("hello")
 ```
 
-#### Middleware Chain
-Agents use a middleware chain pattern for processing:
-- Each middleware is a function that processes input
-- Middlewares can be chained together
-- Common operations (LLM calls, validation, etc.) are middleware
-- Easy to add custom middleware
+#### Tools vs Middleware
+- **Tools** (@tool): Standalone functions for discrete operations
+  ```python 
+  @tool
+  def validate_json(data: str) -> bool:
+      return is_valid_json(data)
+  ```
 
-Example:
+- **Middleware** (@mw): Functions that process agent conversations
+  ```python
+  @mw
+  def add_context(ctx, conv):
+      conv.add_message("system", get_context())
+      return conv
+  ```
+
+#### Agent Flow with Rehop
+Agents can trigger multiple LLM calls in a conversation:
+
 ```python
-@MW.register
-def validate_input(ctx, conv):
-    # Validation logic
+@mw 
+def smart_reply(ctx, conv):
+    # First inference
+    conv = conv.rehop(llm(conv))
+    
+    # Check if we need clarification
+    if needs_clarification(conv[-1].content):
+        # Second inference with updated context
+        conv = conv.rehop(
+            "Please clarify your previous response",
+            role="system"
+        )
+    
     return conv
 
-agent = Agent("validator", "validate_input|llm_chain")
+agent = Agent("smart_agent", "prompt|smart_reply")
 ```
+
+The rehop mechanism allows:
+- Multiple LLM calls per conversation
+- Dynamic conversation flow
+- Context preservation between calls
 
 #### Conversation Management
 Built-in classes for managing conversations:
@@ -53,15 +75,21 @@ Built-in classes for managing conversations:
 pip install cogni
 ```
 
-2. Create an agent:
+2. Create tools and middleware:
 ```python
-from cogni import Agent, MW
+from cogni import tool, mw, Agent
 
-@MW.register
-def my_middleware(ctx, conv):
-    return process(conv)
+@tool
+def fetch_data(query: str) -> dict:
+    """Tool for data retrieval"""
+    return database.query(query)
 
-agent = Agent("my_agent", "my_middleware|llm_chain")
+@mw
+def process_response(ctx, conv):
+    """Middleware for response processing"""
+    return enhance(conv)
+
+agent = Agent("my_agent", "prompt|process_response")
 ```
 
 3. Use the agent:
@@ -71,19 +99,19 @@ result = agent("Hello!")
 
 ### Key Features
 
-- **Minimal Boilerplate**: Focus on agent logic, not infrastructure
-- **Functional Design**: Agents as composable functions
-- **Flexible Middleware**: Easy to extend and customize
-- **Built-in Conversation Management**: Ready-to-use message handling
-- **LLM Integration**: Pre-built middleware for LLM interactions
+- **Magic Imports**: Automatic component discovery
+- **Tool System**: Easy function registration and access
+- **Flexible Middleware**: Chainable conversation processors
+- **Rehop Mechanism**: Multi-step LLM interactions
+- **Built-in Conversation Management**: Ready-to-use utilities
 
 ### Architecture
 
 The framework follows these key principles:
-- Separation of concerns via middleware
-- Functional composition of agents
+- Automatic component registration
+- Separation of tools and middleware
+- Flexible conversation flow with rehop
 - Convention over configuration
-- Extensible by design
 
 ### Testing
 
