@@ -1,8 +1,6 @@
 from typing import Any, Dict
-from ..wrappers import MW
-from ..tools import llm
+from ..tools.llm import llm
 
-@MW.register
 def mock_llm(ctx: Dict[str, Any], conv: Any) -> Any:
     """Middleware that processes input through mock LLM."""
     return llm(conv, model="mock_llm")

@@ -1,8 +1,6 @@
 from typing import Union
 from ..entities import Conversation, Message
-from ..wrappers import tool
 
-@tool
 def llm(conversation: Union[Conversation, str], model: str = "mock_llm") -> Union[Conversation, str]:
     """Process input through an LLM model.
     

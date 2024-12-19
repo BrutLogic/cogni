@@ -1,7 +1,12 @@
-from .magicimport import dynamic_import
-from .wrappers.tool import Tool, tool
+"""Cogni framework initialization."""
+from .entities import Message, Conversation
+from .tools import llm
+from .middlewares.llm import mock_llm, llm_chain
 
-# Dynamically import all modules
-dynamic_import('wrappers')
-dynamic_import('tools')
-dynamic_import('agents')
+__all__ = [
+    'Message',
+    'Conversation', 
+    'llm',
+    'mock_llm',
+    'llm_chain'
+]
