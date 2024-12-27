@@ -1,24 +1,43 @@
 # Cogni
 
+# IMPORTANT NOTE
+If your reading this, I'm currently refactoring my code and feeding the repo.
+
+It's not usable yet, and I'm actively working on the doc (and this README.md).
+
+You can still read it though, it will give you an idea of what it's all about. Just be aware that it will take a few days (probably a week) to be a usable/well documented project.
+
+If you want to chat, come to my [Discord](https://discord.gg/eXtysN5HAH) :) !
+
+I'm super glad for your interest in my stuff.
+
 ## What is Cogni?
-Cogni is a micro-framework allowing low code/low boilerplate implementation of LLM agents.
+
+Cogni is a framework focusing on low code/low boilerplate implementation of LLM agents.
 
 ### Yeah but, why not LangChain though?
+
+I wouldn't go that far as saying `LangChain==Cancer`.
+
 LangChain/LangGraph allow for creating agents and orchestrating flow and communication.
-One key assumption of Cogni is that agentic execution flow has the same requirements and complexity as code; and therefore Agents should be created, managed, and orchestrated by code.
-Which, as a side effect, allows for borrowing architecture from domains like web dev, where best practices are mature.
+One key assumption of Cogni is that agentic execution flow has the same requirements and complexity as code; and therefore Agents should be created, managed, and orchestrated as code and by code.
+
+Which, as a side effect, allows for borrowing ideas from domains like web dev, where best practices are mature.
 
 ## How it works
+
 Cogni is built on the principle of "Agents as Functions," allowing for a modular and composable approach to AI agent development.
 
 ### Hide complexity
+
 Do Large Language Models have any amount of complexity?
 
-If your answer includes "Matrix multiplication" or "Attention map caching", I would object that I don't care.
+If your answer includes "Matrix multiplication" or "Attention map caching", I would have a simple objection: **I don't care**
 
-LLMs are magic black boxes that take text as input and return text.
+When you implement agents, for all you care, LLMs are magic black boxes that take text as input and return text.
 
 For all we care, from our coder point of view, LLMs are as simple as:
+
 ```python
 def chat_completion(prompt: str, model: str = "gpt-3.5-turbo") -> str:
     response = openai.ChatCompletion.create(
@@ -32,91 +51,102 @@ def chat_completion(prompt: str, model: str = "gpt-3.5-turbo") -> str:
 ```
 
 ### Going further
+
 Our goal as coders should be that, from any given scope, all dependencies are magic black boxes with clear specifications.
 
 ### Everything is a function
-We'll define *Agent* as a blackbox that takes any number of inputs of any type, and returns either nothing, or anything of any type, and potentially has *side effects*.
+
+We'll define *Agent* as a black box that takes any number of inputs of any type, and returns either nothing, or anything of any type, and potentially has *side effects*.
 
 In other terms, agents can be thought as **functions**. This allows for powerful control flows:
 
+(\*Note: `function` as in "a Python function"; as opposed to more rigorous definition, like in functional programming)
+
 ```python
-# Sequential processing
-result = Agent['processor'](Agent['parser'](user_input))
+from cogni import Agent
 
-# Parallel tasks
-tasks = Agent['task_splitter'](complex_job)
-results = [Agent['worker'](task) for task in tasks]
-final = Agent['aggregator'](results)
-
-# Recursive handling
-def process_with_feedback(input_data):
-    result = Agent['processor'](input_data)
-    if Agent['quality_check'](result):
-        return result
-    return process_with_feedback(Agent['refiner'](result))
+# Process tasks in a loop
+def do_complex_stuff(task_description:str):
+    for sub_task in Agent['task_splitter'](task_description):
+        Agent['worker'](sub_task)
+    
 ```
 
 ### Magic Imports
+
+
 Cogni uses automatic discovery to make components available globally:
 
-```python
-# Components are automatically discovered in your project structure
-from cogni import Tool, Agent, MW
+**With Cogni, we're free from the burden of imports**
 
-# No need to manually import individual tools/agents
-result = Tool['my_tool'](data)
-response = Agent['my_agent'](query)
+Anywhere in your project:
+
+```python
+# project/it/can/be/any/path/fliddleblooksh.py
+from cogni import tool
+
+@tool
+def add_two_ints(a:int, b:int)->int:
+    return int(a) + int(b)
+```
+
+Anywhere else:
+
+```python
+# project/some/other/file/anywhere.py
+from cogni import Tool
+
+print(
+    Tool['add_two_ints'](2, 3)
+)#> 5
 ```
 
 ### Tools System
-Tools are standalone functions that can be used by any agent:
+
+Tools are standalone functions that can be used by coder and agents:
 
 ```python
-from cogni import tool, Tool
+# agents/SomeAgents/tools/someagent_tools.py
+from cogni import tool
 
 @tool
 def fetch_weather(city: str) -> dict:
     """Get weather data for a city"""
     return weather_api.get(city)
 
-# Use anywhere in your code
-Tool['fetch_weather']('Paris')
 ```
 
+```python
+# somefile.py
+from cogni import Tool
+
+print(Tool['fetch_weather']('Paris'))
+```
+
+
+
+### Install
+
+````bash
+git clone https://github.com/BrutLogic/cogni.git&&cd cogni
+python3 -m pip install
 ### Creating an Agent
 Agents are created by combining a prompt template (.conv file) with middleware:
 
-1. Create the prompt template (my_agent.conv):
-```
-system: You are MyAgent, designed to process user requests.
-Your goal is to {goal}.
-
-user: {user_input}
-```
-
-2. Create the agent:
-```python
-from cogni import Agent, mw
-
-@mw
-def process_response(ctx, conv):
-    # Use tools if needed
-    weather = Tool['fetch_weather'](conv[-1].content)
-    # Return modified conversation
-    return conv.rehop(f"The weather is {weather}")
-
-# Chain middlewares with pipes
-Agent('my_agent', 'prompt|gpt4|process_response')
-```
+```bash
+cd myproject
+cogni create_agent
+````
 
 ### Middleware Flow
+
 Middlewares form a processing chain, each receiving and returning a conversation:
 
 ```python
 @mw
-def smart_middleware(ctx, conv):
+def myagent_loop(ctx, conv):
     # Access conversation history
-    user_msg = conv[-1].content
+    last_msg = conv[-1].content
     
     # Use tools
     result = Tool['some_tool'](user_msg)
@@ -124,13 +154,13 @@ def smart_middleware(ctx, conv):
     # Continue conversation with rehop
     return conv.rehop(
         f"I found this: {result}",
-        role="assistant"
     )
 ```
 
 ### Creating a Complete Agent
 
 1. Project Structure:
+
 ```
 agents/
   my_agent/
@@ -142,7 +172,8 @@ agents/
       helpers.py       # Agent-specific tools
 ```
 
-2. Prompt Template (my_agent.conv):
+2. Prompt Template (my\_agent.conv):
+
 ```
 system: You are MyAgent, specialized in {domain}.
 Your capabilities include: {capabilities}
@@ -151,6 +182,7 @@ user: {user_input}
 ```
 
 3. Middleware (process.py):
+
 ```python
 from cogni import mw, Tool
 
@@ -164,6 +196,7 @@ def process(ctx, conv):
 ```
 
 4. Tools (helpers.py):
+
 ```python
 from cogni import tool
 
@@ -173,6 +206,7 @@ def helper(input: str) -> str:
 ```
 
 5. Agent Registration:
+
 ```python
 from cogni import Agent
 
@@ -180,6 +214,7 @@ Agent('my_agent', 'prompt|gpt4|process')
 ```
 
 6. Usage:
+
 ```python
 from cogni import Agent
 
@@ -189,6 +224,7 @@ response = Agent['my_agent']("Hello!")
 ### Testing
 
 Run the test suite:
+
 ```bash
 pytest tests/
 ```
@@ -196,3 +232,4 @@ pytest tests/
 ### License
 
 MIT License
+
