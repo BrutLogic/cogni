@@ -1,5 +1,35 @@
 """
-HERE
+State management system for persistent storage across agent interactions.
+
+The State system provides a way to store and retrieve data that persists between
+agent calls and across different sessions. It implements a hierarchical storage
+system with automatic persistence to disk.
+
+Key features:
+- Attribute-style access to stored data
+- Automatic persistence to JSON files
+- Nested dictionary and list support
+- Thread-safe storage operations
+
+Usage:
+    from cogni import State
+    
+    # Store data
+    State['agent_name']['key'] = value
+    
+    # Retrieve data
+    value = State['agent_name'].key
+    
+    # Nested structures
+    State['agent_name'].config = {
+        'setting1': 'value1',
+        'setting2': ['item1', 'item2']
+    }
+    
+    # Access nested data
+    items = State['agent_name'].config.setting2
+    
+All data is automatically persisted to disk in the .states directory.
 """
 import os
 import json
