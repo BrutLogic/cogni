@@ -37,9 +37,9 @@ class CogniCLI:
 
         # Get project name
         project_name = Prompt.ask("Enter project name")
-        use_boilerplate = Confirm.ask("Create boilerplate ShellAgent?")
-        init_git = Confirm.ask("Initialize git repository?")
-        add_toolbox = Confirm.ask("Add cogni toolbox (recommended)?")
+        use_boilerplate = Confirm.ask("Create boilerplate ShellAgent?", default=True)
+        init_git = Confirm.ask("Initialize git repository?", default=True)
+        add_toolbox = Confirm.ask("Add cogni toolbox (recommended)?", default=True)
 
         # Create project directory
         os.makedirs(project_name, exist_ok=True)
