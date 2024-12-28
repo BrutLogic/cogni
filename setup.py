@@ -24,7 +24,6 @@ setup(
         ],
     },
     packages=find_packages(include=['cogni', 'cogni.*']),
-    packages=find_packages(include=['cogni', 'cogni.*']),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
