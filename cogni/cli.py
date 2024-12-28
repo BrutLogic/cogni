@@ -50,7 +50,7 @@ class CogniCLI:
             f.write('def main():\n')
             f.write('    pass\n\n')
             f.write('if __name__ == "__main__":\n')
-            f.write('    Agent["ShellAgent"]("what is the current dir ?"')
+            f.write('    Agent["ShellAgent"]("what is the current dir ?")')
 
         if use_boilerplate:
             # Create agent directory structure
@@ -69,7 +69,7 @@ class CogniCLI:
             with open(f"{agent_base}/middlewares/shellagent_loop.py", "w") as f:
                 f.write('from cogni import mw, Tool, use_tools, parse_tools\n\n')
                 f.write('@mw\n')
-                f.write('@use_tools')
+                f.write('@use_tools\n')
                 f.write('def shellagent_loop(ctx, conv):\n')
                 f.write('    tool_uses = parse_tools(ctx)\n')
 
@@ -151,10 +151,10 @@ The available space on `/` is `371G`.
         if init_git:
             subprocess.run(['git', 'init', project_name])
             if add_toolbox:
-                subprocess.run(['git', 'submodule', 'add', 'https://github.com/BrutLogic/CogniToolBox.git', 'toolbox'], 
-                             cwd=project_name)
+                subprocess.run(['git', 'submodule', 'add', 'https://github.com/BrutLogic/CogniToolBox.git', 'toolbox'],
+                               cwd=project_name)
                 subprocess.run(['git', 'submodule', 'update', '--init', '--recursive'],
-                             cwd=project_name)
+                               cwd=project_name)
 
         console.print(f"[green]✓[/] Created Cogni project: {project_name}")
 
