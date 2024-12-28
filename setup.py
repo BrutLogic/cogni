@@ -7,7 +7,6 @@ def readme():
 setup(
     name='cogni',
     version='0.1.0',
-    packages=find_packages(),
     description='A framework for building agentic systems with minimal boilerplate.',
     long_description=readme(),
     long_description_content_type='text/markdown',
