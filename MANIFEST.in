@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include requirements.txt
+recursive-include cogni *.py
+recursive-include cogni *.conv
+recursive-include doc *.md
