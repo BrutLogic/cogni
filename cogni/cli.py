@@ -48,16 +48,14 @@ Usage:
 
 def main():
     """Main entry point for the Cogni CLI."""
-    if len(sys.argv) == 1:
-        console.print(CogniCLI())
-        return 0
-        
     try:
+        if len(sys.argv) == 1:
+            console.print(CogniCLI())
+            sys.exit(0)
         fire.Fire(CogniCLI)
     except Exception as e:
         console.print(f"[error]Error: {str(e)}")
-        return 1
-    return 0
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
