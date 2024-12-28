@@ -1,4 +1,5 @@
 """CLI interface for Cogni using Fire and Rich."""
+import os
 import sys
 import fire
 from rich.console import Console
@@ -10,6 +11,10 @@ console = Console(theme=Theme({
     "warning": "yellow",
     "error": "red bold"
 }))
+
+if sys.version_info < (3, 8):
+    console.print("[error]Python 3.8 or higher is required")
+    sys.exit(1)
 
 class CogniCLI:
     """Cogni command line interface."""
