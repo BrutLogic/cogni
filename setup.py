@@ -24,6 +24,7 @@ setup(
             'cogni=cogni.cli:main',
         ],
     },
+    packages=find_packages(include=['cogni', 'cogni.*']),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
