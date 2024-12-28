@@ -1,4 +1,5 @@
 """CLI interface for Cogni using Fire and Rich."""
+import sys
 import fire
 from rich.console import Console
 from rich.panel import Panel
@@ -36,9 +37,21 @@ class CogniCLI:
         """
         console.print(Panel(f"Running agent [bold blue]{agent}[/]"))
         # TODO: Implement agent running
+        
+    def __str__(self):
+        return """Cogni CLI
+
+Usage:
+    cogni create <name>     Create a new project
+    cogni init             Initialize project in current directory
+    cogni run <agent> <input>  Run an agent"""
 
 def main():
     """Main entry point for the Cogni CLI."""
+    if len(sys.argv) == 1:
+        console.print(CogniCLI())
+        return 0
+        
     try:
         fire.Fire(CogniCLI)
     except Exception as e:
