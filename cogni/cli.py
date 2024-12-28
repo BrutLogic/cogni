@@ -39,6 +39,7 @@ class CogniCLI:
         project_name = Prompt.ask("Enter project name")
         use_boilerplate = Confirm.ask("Create boilerplate ShellAgent?")
         init_git = Confirm.ask("Initialize git repository?")
+        add_toolbox = Confirm.ask("Add cogni toolbox (recommended)?")
 
         # Create project directory
         os.makedirs(project_name, exist_ok=True)
@@ -149,6 +150,11 @@ The available space on `/` is `371G`.
 
         if init_git:
             subprocess.run(['git', 'init', project_name])
+            if add_toolbox:
+                subprocess.run(['git', 'submodule', 'add', 'https://github.com/BrutLogic/CogniToolBox.git', 'toolbox'], 
+                             cwd=project_name)
+                subprocess.run(['git', 'submodule', 'update', '--init', '--recursive'],
+                             cwd=project_name)
 
         console.print(f"[green]✓[/] Created Cogni project: {project_name}")
 
