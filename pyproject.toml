@@ -16,6 +16,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.scripts]
+cogni = "cogni.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/BrutLogic/cogni"
 Issues = "https://github.com/BrutLogic/cogni/issues"
