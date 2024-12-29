@@ -262,10 +262,19 @@ Then comes back to `gpt4` middleware, which:
 ```mermaid
 graph TD
     A[Input] --> B[prompt mw]
-    B --> C[gpt4 mw]
-    C -->|rehop=True| D[LLM]
-    D --> E[gpt4 mw]
-    E -->|rehop=False| F[Output]
+    B --> C[gpt4 mw first pass]
+    C -->|"flags: {llm: gpt4, rehop: True}"| D[LLM]
+    D --> E[gpt4 mw second pass]
+    E -->|"flags: {llm: gpt4, rehop: False}"| A
+    
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style E fill:#bbf,stroke:#333,stroke-width:2px
+    
+    classDef firstPass fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef secondPass fill:#bbf,stroke:#333,stroke-width:2px;
+    
+    class C firstPass;
+    class E secondPass;
 ```
 
 
