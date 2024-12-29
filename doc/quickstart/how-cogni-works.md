@@ -260,30 +260,30 @@ Then comes back to `gpt4` middleware, which:
 2. Returns the conversation with the LLM's response
 
 ```mermaid
-graph TD
-    A[Input] --> B[prompt mw]
-    B --> C[gpt4 mw first pass]
-    C -->|"flags: {llm: gpt4, rehop: True}"| D[LLM]
-    D --> E[gpt4 mw second pass]
-    E -->|"flags: {llm: gpt4, rehop: False}"| A
-    
-    style C fill:#f9f,stroke:#333,stroke-width:2px
-    style E fill:#bbf,stroke:#333,stroke-width:2px
-    
-    classDef firstPass fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef secondPass fill:#bbf,stroke:#333,stroke-width:2px;
-    
-    class C firstPass;
-    class E secondPass;
+graph LR
+    A[Input] -->|str| B[prompt mw]
+    B -->|Conv:<br>🏳️llm: None<br> 🏳️rehop: False<br>🏳️hops: 0| C[gpt4 mw]
+    C -->|Conv:<br>🏳️llm: gpt4<br> 🏳️rehop: True<br>🏳️hops: 0| D[LLM]
+    D -->|Conv:<br>🏳️llm: gpt4<br> 🏳️rehop: False<br>🏳️hops: 1|C
+    C -->|Conv:<br>🏳️llm: gpt4<br> 🏳️rehop: False<br>🏳️hops: 1| E[Output]
+
 ```
 
+_________________
 
+At this stage:
+```python
+# main.py
+from cogni import Agent
+
+print(Agent['SimpleAgent']('What time is it ?'))
+```
 ```
             ╭───────────────────────╮
             │ 🏳️␣flags:             │
-            │     llm:   None       │
+            │     llm:   gpt4       │
             │     rehop: False      │
-            │     hops:  0          │
+            │     hops:  1          │
             ╰───────────────────────╯
     
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
@@ -296,6 +296,8 @@ graph TD
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
 │ 🧑␣user: What time is it ?                     │ 
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
+
+#HERE
 ```
 
 
