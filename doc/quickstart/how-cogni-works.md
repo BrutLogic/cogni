@@ -48,33 +48,17 @@ print(Agent['ShellAgent'](prompt))
 ### `ShellAgent` implementation details overview
 
 ```mermaid
-graph TD
-    Input[User Input] --> Agent[ShellAgent]
-    Agent --> MW1[Prompt History MW]
-    MW1 --> MW2[GPT4 MW]
-    MW2 --> MW3[Shell Loop MW]
-    
-    subgraph "Shell Loop Middleware"
-        MW3 --> Parse[Parse Tool Usage]
-        Parse --> Exec[Execute Shell Command]
-        Exec --> Check{Check Result}
-        Check -->|Error| Rehop[Rehop to Agent]
-        Check -->|Success| Format[Format Output]
-        Rehop --> MW2
-    end
-    
-    Format --> Output[Return Result]
+graph LR
+    User[User Input] --> Agent[ShellAgent]
+    Agent --> Shell[Shell Command]
+    Shell -->|Output| Agent
+    Agent --> Output[Result]
 ```
 
-The diagram shows how ShellAgent processes requests:
-1. User input goes through the agent
-2. Prompt history middleware maintains context
-3. GPT4 middleware generates responses
-4. Shell loop middleware:
-   - Parses tool usage from GPT4 output
-   - Executes shell commands
-   - Handles errors by rehopping to GPT4
-   - Formats successful results
-5. Final output is returned to user
+The diagram shows the basic flow:
+1. User input is sent to ShellAgent
+2. Agent processes input and executes shell command
+3. Shell output is returned to agent
+4. Agent formats and returns final result
 
 
