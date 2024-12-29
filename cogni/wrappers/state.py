@@ -1,35 +1,48 @@
 """
-State management system for persistent storage across agent interactions.
+Persistent state management made simple.
 
-The State system provides a way to store and retrieve data that persists between
-agent calls and across different sessions. It implements a hierarchical storage
-system with automatic persistence to disk.
+```python
+from cogni import State
 
-Key features:
-- Attribute-style access to stored data
-- Automatic persistence to JSON files
-- Nested dictionary and list support
-- Thread-safe storage operations
-
-Usage:
-    from cogni import State
-    
-    # Store data
-    State['agent_name']['key'] = value
-    
-    # Retrieve data
-    value = State['agent_name'].key
-    
-    # Nested structures
-    State['agent_name'].config = {
-        'setting1': 'value1',
-        'setting2': ['item1', 'item2']
+if not "Test" in State:
+    State["Test"] {
+        "bla":{
+            "foo":{
+                "bar":1
+            }
+        }
     }
     
-    # Access nested data
-    items = State['agent_name'].config.setting2
+# Then, in another execution context:
+
+print(State["Test"].bla.foo.bar) # 1
+```
+
+
+## **Usage**
+```python
+from cogni import State
     
-All data is automatically persisted to disk in the .states directory.
+# Store data
+State['agent_name']['key'] = value
+    
+# Retrieve data
+value = State['agent_name'].key
+    
+# Nested structures
+State['agent_name'].config = {
+    'setting1': 'value1',
+    'setting2': ['item1', 'item2']
+}
+    
+# Access nested data
+items = State['agent_name'].config.setting2
+```
+
+## **TODO**
+
+As of right now, `State` uses JSON file.
+It should be refactored for something more robust
 """
 import os
 import json
@@ -223,8 +236,17 @@ class StateList:
 
 
 class _State:
-    def __init__(self):
-        self._states_dir = '/home/val/GoodAI/goodassistant/.states'
+    _INSTANCE = None
+
+    @classmethod
+    def singleton(cls, cwd):
+        if cls._INSTANCE is None:
+            cls._INSTANCE = cls(cwd)
+
+        return cls._INSTANCE
+
+    def __init__(self, cwd):
+        self._states_dir = f'{cwd}/.states'
         self._cache = {}
         self._callbacks = []
         # Create states directory if it doesn't exist
@@ -293,4 +315,4 @@ class _State:
         self._cache.pop(state_name, None)
 
 
-State = _State()
+init_state = _State.singleton

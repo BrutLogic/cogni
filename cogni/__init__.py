@@ -1,12 +1,33 @@
 """Cogni framework initialization."""
+import os
 from .entities import Message, Conversation
-from .tools.llm import llm
-from .middlewares.llm import mock_llm, llm_chain
+from .wrappers import tool, Tool, MW, mw, Agent, init_state
+from .magicimport import dynamic_import
+
+
+State = init_state(os.getcwd())
+
+
+def use_tools(*a, **kw): raise Exception('TODO')
+def parse_tools(*a, **kw): raise Exception('TODO')
+
+
+for dir_name in [
+    'tools',
+    'agents',
+    'middlewares',
+]:
+    dynamic_import(dir_name)
 
 __all__ = [
     'Message',
-    'Conversation', 
-    'llm',
-    'mock_llm',
-    'llm_chain'
+    'Conversation',
+    'tool',
+    'Tool',
+    'mw',
+    'MW',
+    'Agent',
+    'State',
+    'use_tools',
+    'parse_tools',
 ]

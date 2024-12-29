@@ -1,27 +1,26 @@
-.# Installation
+# Installation
 
 ## Prerequisites
 - Python 3.8+
 - pip
 - git
 
-## Steps
 
-1. Clone the repository:
+## From Pypi
 ```bash
-git clone https://github.com/yourusername/cogni.git
+python3 -m pip install cogni
+```
+
+## Repo
+
+```bash
+git clone https://github.com/BrutLogic/cogni.git
 cd cogni
+python3 -m pip install -e .
 ```
 
-2. Install using pip:
-```bash
-pip install -e .
-```
 
-3. Verify installation:
-```bash
-python -c "import cogni; print(cogni.__version__)"
-```
+
 
 ## Development Setup
 

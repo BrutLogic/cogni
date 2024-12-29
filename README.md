@@ -1,6 +1,6 @@
 # Cogni
 
-# IMPORTANT NOTE
+# IMPORTANT NOTE 1
 If your reading this, I'm currently refactoring my code and feeding the repo.
 
 It's not usable yet, and I'm actively working on the doc (and this README.md).
@@ -10,6 +10,32 @@ You can still read it though, it will give you an idea of what it's all about. J
 If you want to chat, come to my [Discord](https://discord.gg/eXtysN5HAH) :) !
 
 I'm super glad for your interest in my stuff.
+
+# IMPORTANT NOTE 2
+
+My initial plan was to feed this README as I feed the repo, but I'm not sure yet how to structure it properly.
+
+For that reason I'll leave it as it is and work on:
+
+## Quick Start
+
+[How Cogni works (If you're in a hurry)](doc/quickstart/how-cogni-works.md)
+
+[Installation](doc/quickstart/install.md)
+
+[Your first Cogni project](doc/quickstart/project_init.md)
+
+[Your first tool](doc/quickstart/first_tool.md)
+
+[Your first agent: ShellAgent](doc/quickstart/first_agent.md)
+
+[Your first swarm: DiscordAgent](doc/quickstart/first_swarm.md)
+
+[Handling states](doc/quickstart/states.md)
+
+[Handling Endpoint](doc/quickstart/states.md)
+
+
 
 ## What is Cogni?
 
