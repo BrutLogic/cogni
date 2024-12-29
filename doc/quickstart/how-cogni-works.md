@@ -236,78 +236,28 @@ At this stage:
 # main.py
 from cogni import Agent
 
-Agent['SimpleAgent']('What time is it ?')
+print(Agent['SimpleAgent']('What time is it ?'))
 ```
 
 Won't involve any LLM and will return an instance of `cogni.Conversation`
 
 
 ```
+Conversation:
+    flags: {
+        llm: None,
+        rehop: False,
+    }
+    
+Messages:
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-│ 🤖‍system: You are SimpleAgent.                │
+│ 🤖‍␣system: You are SimpleAgent.                │
 │ You're a demonstration agent for a tutorial.   │
 │                                                │
 │ You can use:                                   │
 │ <tool name="get_time"></tool>                  │
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-
-╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-│ 🧑 user: What time is it ?                  │ 
-╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-
-
-```
-
-```
-# Box drawing experiments with emoji alignment:
-
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-│ 🤖 Welcome to SimpleAgent!                      │
-│ This is a line without emoji                    │
-│ 🤖 Testing with one extra space ␣               │
-│ Regular line for comparison                     │
-│ 🤖 With two extra spaces ␣ ␣                    │
-│ Another normal line                             │
-│ 🤖 Using thin space ᵢ                           │
-│ Control line                                    │
-│ 🤖 Hair space ʰ                                 │
-│ Reference line                                  │
-│ 🤖 Zero-width space ​                           │
-│ Baseline                                        │
-│ 🤖 Em space ﻿                                    │
-│ Standard line                                   │
-│ 🤖 En space ‌                                    │
-│ Normal text                                     │
-│ 🤖 Narrow no-break space ⁣                      │
-│ Plain text                                      │
-│ 🤖 Figure space ⁤                               │
-│ Basic line                                      │
-│ 🤖 Punctuation space ⁥                          │
-│ Simple text                                     │
+│ 🧑␣user: What time is it ?                     │ 
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-
-# More experiments:
-
-╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-│ 🤖 With combining characters ̈                    │
-│ Reference line here                             │
-│ 🤖 Multiple thin spaces ᵢᵢ                      │
-│ Control text                                    │
-│ 🤖 Mixed spaces ᵢ␣                              │
-│ Baseline text                                   │
-│ 🤖 Triple combo ᵢ␣ʰ                             │
-│ Standard line                                   │
-│ 🤖 Four-space mix ᵢ␣ʰ​                          │
-│ Normal content                                  │
-│ 🤖 Complex spacing ᵢ␣ʰ​⁣                         │
-│ Regular text                                    │
-╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-
-# Note: Different terminals and fonts may render these differently.
-# The most consistent results seem to come from:
-# 1. Using a single thin space ᵢ
-# 2. Using a regular space with zero-width space
-# 3. Using the narrow no-break space ⁣
 ```
-
-
