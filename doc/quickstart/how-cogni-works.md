@@ -297,7 +297,17 @@ print(Agent['SimpleAgent']('What time is it ?'))
 │ 🧑␣user: What time is it ?                     │ 
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 
-#HERE
+╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
+│ 🤖 assistant: Let me check the time for you.     │
+│                                                  │
+│ <tool name="get_time"></tool>                    │
+╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
+
+# Alternative emojis that could work:
+# 🎯 - For precision/targeting
+# 🔍 - For searching/checking
+# ⚡ - For quick response
+# 💫 - For magic/automation
 ```
 
 
