@@ -341,7 +341,11 @@ We want that:
 │ 📟 system: (ShellAgent prompt...)              │
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-│ 🧑 user: #HERE                         │ 
+│ 🧑 user: I want you to go to my desktop dir, which contains the directory `Images`.     │
+│                                                                                        │
+│ I want you to create a dir `Images/Thumbnails/`, create thumbnails (128x128)          │
+│ for all png in `Images` and then return a list containing the absolute path           │
+│ for all the thumbnails                                                                │
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
 │ 🤖 assistant: Let me check the time for you.   │
