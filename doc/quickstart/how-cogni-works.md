@@ -74,15 +74,15 @@ It will create the following file structure:
 
 ```
 agents/
-  ShellAgent/
-    agents/
-      ShellAgent.py         # Agent registration
-    middlewares/
-      shellagent_loop.py    # Main loop middleware
-    prompts/
-      ShellAgent.conv       # Prompt template
-    tools/
-      shell_tools.py        # Shell-specific tools
+└── ShellAgent/
+    ├── agents/
+    │   └── ShellAgent.py         # Agent registration
+    ├── middlewares/
+    │   └── shellagent_loop.py    # Main loop middleware
+    ├── prompts/
+    │   └── ShellAgent.conv       # Prompt template
+    └── tools/
+        └── shell_tools.py        # Shell-specific tools
 ```
 
 This structure is the minimum required for an agent to work:
