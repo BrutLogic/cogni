@@ -72,6 +72,23 @@ When agent has no more command to run, it returns the output (we'll see later ab
 
 It will create the following file structure:
 
-#HERE
+```
+agents/
+  ShellAgent/
+    agents/
+      ShellAgent.py         # Agent registration
+    middlewares/
+      shellagent_loop.py    # Main loop middleware
+    prompts/
+      ShellAgent.conv       # Prompt template
+    tools/
+      shell_tools.py        # Shell-specific tools
+```
 
+This structure is the minimum required for an agent to work:
+
+1. `agents/ShellAgent.py`: Registers the agent and its middleware chain
+2. `middlewares/shellagent_loop.py`: Main processing loop that handles tool usage
+3. `prompts/ShellAgent.conv`: The prompt template that defines agent behavior
+4. `tools/shell_tools.py`: Agent-specific tools (in this case, shell commands)
 
