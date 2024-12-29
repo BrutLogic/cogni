@@ -22,33 +22,35 @@ Said otherwise, any framework should aim at allowing for implementing absolutely
 *Thinking about implementing a framework should start by specifying the behaviors of the highest level abstractions at use time. And ONLY then, think about implementation details*
 
 
-### Agent: At use time/From the outside
 
-I'll illustrate
+I'll illustrate with `ShellAgent`.
+**Specs**: `ShellAgent` interacts (with arbitrarily many rehops) with a shell instance. Can do anything you can do with a shell, and returns anything, with the Python type specified in the prompt.
+
+### `ShellAgent`: At use time/From the outside
 
 ```python
-# Agents are functions that take any input and return any output
-result = Agent['ShellAgent']("what's in the current directory?")
-print(result) # Lists directory contents
+from cogni import Agent
 
-# Agents can be chained
-summary = Agent['ChangeDescriptor'](
-    Agent['Gitor']("analyze https://github.com/openai/whisper")
-)
+prompt = """I want you to go to my desktop dir, which contains the directory `Images`.
 
-# Agents can maintain state
-Agent['ChatAgent'].memory['last_topic'] = "AI safety"
+I want you to create a dir `Images/Thumbnails/`, create thumbnails (128x128) for all png in `Images` and then return a list containing the absolute path for all the thumbnails
+"""
 
-# Agents can emit and handle events
-@Event.on('user_message') 
-def handle_message(event):
-    Agent['ChatAgent'](event.data['message'])
+print(Agent['ShellAgent'](prompt))
+#> [
+#   '/home/v/Desktop/Images/Thumbnails/cute-cats.png',
+#   '/home/v/Desktop/Images/Thumbnails/avatar.png',
+#   '/home/v/Desktop/Images/Thumbnails/stuff.png',
+#  ]
 
-# Agents can use tools
-@tool
-def get_weather(city: str) -> str:
-    return weather_api.get(city)
-
-Agent['WeatherBot']("What's the weather in Paris?")
 ```
+
+### `ShellAgent` implementation details overview
+
+```mermaid
+graph LR
+    A -> B
+```
+
+
 
