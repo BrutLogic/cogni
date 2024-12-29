@@ -241,6 +241,33 @@ print(Agent['SimpleAgent']('What time is it ?'))
 
 Won't involve any LLM and will return an instance of `cogni.Conversation`
 
+____________
+Let's add the `gpt4` middleware:
+
+```python
+Agent('SimpleAgent', 'prompt|gpt4')
+```
+
+The `gpt4` middleware:
+1. Sets the conversation flags:
+   - `llm: "gpt4"` - specifies which model to use
+   - `rehop: True` - but only if hops == 0 (first pass)
+2. Returns the conversation
+
+When `rehop` is True, the conversation goes through LLM inference
+Then comes back to `gpt4` middleware, which:
+1. Sets `rehop: False` (since hops > 0)
+2. Returns the conversation with the LLM's response
+
+```mermaid
+graph TD
+    A[Input] --> B[prompt mw]
+    B --> C[gpt4 mw]
+    C -->|rehop=True| D[LLM]
+    D --> E[gpt4 mw]
+    E -->|rehop=False| F[Output]
+```
+
 
 ```
             ╭───────────────────────╮
