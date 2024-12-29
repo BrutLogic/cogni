@@ -27,6 +27,28 @@ Said otherwise, any framework should aim at allowing for implementing absolutely
 I'll illustrate
 
 ```python
+# Agents are functions that take any input and return any output
+result = Agent['ShellAgent']("what's in the current directory?")
+print(result) # Lists directory contents
 
+# Agents can be chained
+summary = Agent['ChangeDescriptor'](
+    Agent['Gitor']("analyze https://github.com/openai/whisper")
+)
 
+# Agents can maintain state
+Agent['ChatAgent'].memory['last_topic'] = "AI safety"
+
+# Agents can emit and handle events
+@Event.on('user_message') 
+def handle_message(event):
+    Agent['ChatAgent'](event.data['message'])
+
+# Agents can use tools
+@tool
+def get_weather(city: str) -> str:
+    return weather_api.get(city)
+
+Agent['WeatherBot']("What's the weather in Paris?")
+```
 
