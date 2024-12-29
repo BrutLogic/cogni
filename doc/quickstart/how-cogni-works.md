@@ -50,15 +50,28 @@ print(Agent['ShellAgent'](prompt))
 ```mermaid
 graph LR
     User[User Input] --> Agent[ShellAgent]
-    Agent --> Shell[Shell Command]
+    Agent -->|Tool use syntax| Shell[Shell]
     Shell -->|Output| Agent
     Agent --> Output[Result]
 ```
 
-The diagram shows the basic flow:
-1. User input is sent to ShellAgent
-2. Agent processes input and executes shell command
-3. Shell output is returned to agent
-4. Agent formats and returns final result
+In words:
+We want the LLM to run commands using tools
+Every time a command is made, the agent is prompted back with the output of the command.
+When agent has no more command to run, it returns the output (we'll see later about the "Of any type" part)
+
+### `ShellAgent` implementation: MiddleWare chain
+
+**This is an important part: Cogni's MiddleWare flow**
+
+- **Step 1**: create agents boilerplate using `cogni`
+  ```bash
+  ~ cd ourProject
+  ~ cogni create_agent ShellAgent
+  ```
+
+It will create the following file structure:
+
+#HERE
 
 
