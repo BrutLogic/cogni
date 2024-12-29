@@ -303,7 +303,7 @@ Will show:
 
 ```
             ╭───────────────────────╮
-            │ 🏳️␣flags:             │
+            │ 🏳️ flags:             │
             │     llm:   gpt4       │
             │     rehop: False      │
             │     hops:  1          │
@@ -336,7 +336,17 @@ Getting back to `ShellAgent`
 We want that:
 - Every time `ShellAgent` uses a tool, the output from the tool is appended to the conversation and the conversation is rehoped (sent back to the LLM)
 
+**Reminder of the important bits**:
+- `ShellAgent` middlewares chain is `prompt|gpt4|shellagent_loop`
+- Given the input used at the start of this doc, and knowing about the middleware flow, here's what we can expect to enter `shellagent_loop` (so, input went through the middlewares `prompt` that outputed a conv, then `gpt4` that trigger a LLM inference (ie, appended an `assistant` message to the conversation))
+
 ```
+            ╭───────────────────────╮
+            │ 🏳️ flags:             │
+            │     llm:   gpt4       │
+            │     rehop: False      │
+            │     hops:  1          │
+            ╰───────────────────────╯
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
 │ 📟 system: (ShellAgent prompt...)                                                        │
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
@@ -351,16 +361,40 @@ We want that:
 │ for all png in `Images` and then return a list containing the absolute path              │
 │ for all the thumbnails                                                                   │
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-│ 🤖 assistant: <Thinking>                        │
-│ 1. First I need to know where I am             │
-│ 2. I should check the current directory         │
-│ 3. Then I can proceed with the image tasks      │
-│ </Thinking>                                     │
-│                                                 │
-│ <tool name="shell">pwd</tool>                   │
-╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
+╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
+│ 🤖 assistant: <Thinking>                                                                │
+│ - First I need to know where I am                                                        │
+│ - I'll run `pwd`                                                                         │
+│ - I should check the current directory                                                   │
+│ - Then I can proceed with the image tasks                                                │
+│ </Thinking>                                                                              │
+│                                                                                          │
+│ <tool name="shell">pwd</tool>                                                            │
+╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 ```
+
+_______________
+
+### Implementing middleware
+Now, let's open `agents/ShellAgent/middlewares/shellagent_loop.py`
+
+```python
+from cogni import mw, Tool, Conversation
+
+@mw
+def shellagent_loop(ctx, conv:Conversation):
+    last_msg = conv[-1]
+    assert last_msg.role == 'assistant'
+
+    tool_uses = Tool.parse_tool_use(last_message.content)
+
+    for tool_use in tool_uses:
+        tool_output = Tool[tool_use.name](tool_use.content)
+        return conv.rehop(tool_output)
+...
+```
+
+
 
 
 
