@@ -244,10 +244,12 @@ Won't involve any LLM and will return an instance of `cogni.Conversation`
 
 ```
 Conversation:
-    flags: {
-        llm: None,
-        rehop: False,
-    }
+    ╭───────────────────────╮
+    │ flags: {              │
+    │     llm: None,        │
+    │     rehop: False,     │
+    │ }                     │
+    ╰───────────────────────╯
     
 Messages:
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
