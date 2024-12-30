@@ -105,5 +105,41 @@ recent = conv[-3:]  # Last 3 messages
 
 ## Flags
 
+Conversations can have flags that control their behavior:
+
+```python
+conv = Conversation.from_str("user: hello")
+
+# Check flags
+print(conv.llm)           # None - LLM model to use
+print(conv.should_infer)  # False - Whether to run inference
+print(conv.hops)         # 0 - Number of inference steps
+
+# Set flags
+conv.llm = "gpt-4"
+conv.should_infer = True
+```
+
 ## Templating
-blabla use msg.parse(parser)
+
+Messages can be parsed using custom parsers to replace placeholders or apply formatting:
+
+```python
+from cogni import Message, parser
+
+# Create a parser for <var> tags
+var_parser = parser("<var>", "</var>")
+
+msg = Message("user", "My name is <var>Alice</var>")
+msg.parse(var_parser)  # Will process the <var> tags
+
+# Create custom parsers for any tags
+custom_parser = parser("{{", "}}")
+msg.parse(custom_parser)  # Will process {{tags}}
+```
+
+The parser function helps create reusable parsers for different tag formats. Common uses include:
+
+- Replacing variables in prompts
+- Formatting code blocks
+- Processing custom markup in messages
