@@ -2,6 +2,46 @@
 
 The `Conversation` and `Message` classes are core components for handling dialogue in Cogni.
 
+## Note about Few Shot Prompting
+
+Few Shot Prompting is great, and you should be using it.
+
+For all of this doc, I'll call "**Prompt**" the base conversation of an agent; a short conversation starting with a system prompt
+
+## File
+
+By convention, the prompt of an agent will be in a file with the same name as the agent with `.conv` extension.
+
+So, for the example agent `ShellAgent`
+```
+agents/
+└─ ShellAgent/
+    ├─ agents/
+    │   └─ ShellAgent.py 
+    ├─ middlewares/
+    │   └─ shellagent_loop.py
+    ├─ prompts/
+    │   └─ ShellAgent.conv # 👈 IT'S HERE
+    └─ tools/
+        └─ shellagent_tools.py 
+```
+
+## File Format
+
+A message is formated `{role}:{content}` and message are separated with `__-__`
+
+```
+system: Your are an agent blabla
+
+__-__
+
+user: can you to stuff
+
+__-__
+
+assistant: sure :)
+```
+
 ## Message Class
 
 A `Message` represents a single message in a conversation with:
@@ -35,14 +75,12 @@ from cogni import Conversation
 conv_str = """
 system:You are a helpful assistant.
 __-__
+
 user:Hi!
 __-__
 assistant:Hello! How can I help you?
 """
 conv = Conversation.from_str(conv_str)
-
-# From a file
-conv = Conversation.from_file('my_conversation.conv')
 ```
 
 2. Adding messages:
@@ -65,37 +103,7 @@ last_msg = conv[-1]
 recent = conv[-3:]  # Last 3 messages
 ```
 
-4. Persistence:
-```python
-# Save to string
-conv_text = conv.to_str()
+## Flags
 
-# Save to file
-conv.to_file('saved_conversation.conv')
-
-# Convert to OpenAI format
-openai_messages = conv.openai()
-```
-
-5. Rehop for inference:
-```python
-# Create new conversation for next inference step
-new_conv = conv.rehop("Let me think about that", role='system')
-```
-
-## File Format
-
-Conversations use a simple text format with `__-__` as message separator:
-
-```
-system:You are a helpful assistant.
-__-__
-user:Hi there!
-__-__
-assistant:Hello! How can I help you today?
-```
-
-This format makes it easy to:
-- Store conversations in version control
-- Edit them in any text editor
-- Share them between different parts of your application
+## Templating
+blabla use msg.parse(parser)
