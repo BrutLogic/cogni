@@ -153,16 +153,17 @@ print(Tool['fetch_weather']('Paris'))
 
 ### Install
 
-````bash
+```bash
 git clone https://github.com/BrutLogic/cogni.git&&cd cogni
 python3 -m pip install
+```
 ### Creating an Agent
 Agents are created by combining a prompt template (.conv file) with middleware:
 
 ```bash
 cd myproject
 cogni create_agent
-````
+```
 
 ### Middleware Flow
 
