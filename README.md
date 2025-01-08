@@ -1,5 +1,9 @@
 # Cogni
 
+# UPDATE
+
+I'm still feeding the repo
+
 # IMPORTANT NOTE 1
 If your reading this, I'm currently refactoring my code and feeding the repo.
 
@@ -22,6 +26,8 @@ For that reason I'll leave it as it is and work on:
 [How Cogni works (If you're in a hurry)](doc/quickstart/how-cogni-works.md)
 
 [Installation](doc/quickstart/install.md)
+
+[Prompting primitives](doc/quickstart/prompting.md)
 
 [Your first Cogni project](doc/quickstart/project_init.md)
 

@@ -338,6 +338,7 @@ We want that:
 
 **Reminder of the important bits**:
 - `ShellAgent` middlewares chain is `prompt|gpt4|shellagent_loop`
+- When a middleware returns an instance of `cogni.Conversation` with `rehop` flag to `True`, it triggers a LLM inference and the same middleware is called again (hence, a middleware is an implicit loop with as many iterations as you want)
 - Given the input used at the start of this doc, and knowing about the middleware flow, here's what we can expect to enter `shellagent_loop` (so, input went through the middlewares `prompt` that outputed a conv, then `gpt4` that trigger a LLM inference (ie, appended an `assistant` message to the conversation))
 
 ```
@@ -375,7 +376,16 @@ We want that:
 
 _______________
 
-### Implementing middleware
+
+### Implementing main middleware
+
+What we're aiming for, in the LLM `shellagent_loop`:
+- We want to parse the tool use
+- We want to execute the tool
+- We want to append the output of the tool to the conversation
+- We want a LLM inference (aka: the agent acting upon the tool's output)
+  - We'll achieve that by doing `return conv.rehop(tool_output)`
+
 Now, let's open `agents/ShellAgent/middlewares/shellagent_loop.py`
 
 ```python
@@ -391,12 +401,17 @@ def shellagent_loop(ctx, conv:Conversation):
     for tool_use in tool_uses:
         tool_output = Tool[tool_use.name](tool_use.content)
         return conv.rehop(tool_output)
-...
+    reply = Tool['parse_reply'](last_msg.content)
+
+    return conv
+
 ```
 
+### Making the agent return a value with arbitrary type
 
+By convention, the main middleware of an agent returns a conversation.
 
-
+If we want it to return a string or a list, the cleanest way to do that is to add a middleware to the chain.
 
 
 
